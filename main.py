@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 # Convert data to pandas dataframe
-df = pd.DataFrame(data)
+df = pd.DataFrame(data).reset_index()
 
 # Set date as index
 df.set_index('Date', inplace=True)
