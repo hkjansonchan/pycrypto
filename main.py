@@ -1,7 +1,8 @@
 import yfinance as yf
+from datetime import date
 
 # Fetch Bitcoin historical data
-data = yf.download('BTC-USD', start='2010-01-01', end='2022-02-26')
+data = yf.download('BTC-USD', start='2010-01-01', end=date.today())
 import pandas as pd
 import numpy as np
 
