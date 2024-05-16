@@ -56,10 +56,12 @@ train_df.dropna(inplace=True)
 test_df.dropna(inplace=True)
 
 # Fit the model
-model.fit(train_df['Daily Return'].values.reshape(-1, 1), epochs=50, batch_size=1, verbose=2)
+train_data = np.expand_dims(train_df['Daily Return'].values, -1)
+model.fit(train_data, epochs=50, batch_size=1, verbose=2)
 
 # Make predictions on the test data
-predictions = model.predict(test_df['Daily Return'].values.reshape(-1, 1))
+test_data = np.expand_dims(test_df['Daily Return'].values, -1)
+predictions = model.predict(test_data)
 
 # Evaluate the performance of the model
 mse = mean_squared_error(test_df['Daily Return'], predictions)
