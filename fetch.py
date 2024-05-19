@@ -22,13 +22,13 @@ if os.path.isfile("data.csv") == True:
     # Convert ohlcv to DataFrame
     new_df = pd.DataFrame(ohlcv, columns=["date", "open", "high", "low", "close", "volume"])
     new_df["date"] = pd.to_datetime(new_df["date"], unit="ms")
-    
+
     # Append new data to existing CSV
-    csv = pd.read_csv("data.csv")
-    csv = csv.concat(new_df, ignore_index=True)
+    csv = pd.concat([csv, new_df], ignore_index=True)
     csv.to_csv("data.csv", index=False)
 
 else:
+    f = open("data.csv", "x")
     # Fetch new data to CSV
     ex = ccxt.binance()
     from_ts = ex.parse8601("2018-01-01 00:00:00")
