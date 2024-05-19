@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 if os.path.isfile("data.csv") == True:
     # Fetch to last row
     csv = pd.read_csv("data.csv")
-    date_obj = datetime.strptime(csv.iloc[-1, 0], "%Y-%m-%d %H:%M:%S.%f")
+    date_obj = datetime.strptime(csv.iloc[-1, 0], "%Y-%m-%d %H:%M:%S ")
     date_obj += timedelta(minutes=15)
     ex = ccxt.binance()
     from_ts = ex.parse8601(str(date_obj))
