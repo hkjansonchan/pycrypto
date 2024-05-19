@@ -8,8 +8,8 @@ if os.path.isfile("data.csv") == True:
     csv = pd.read_csv("data.csv")
     date_obj = datetime.strptime(csv.iloc[-1, 0], "%Y-%m-%d %H:%M:%S")
     date_obj += timedelta(minutes=15)
-    ex = ccxt.binance()    
-    from_ts = ex.parse8601("2018-01-01 00:00:00")
+    ex = ccxt.binance()
+    from_ts = ex.parse8601(str(date_obj))
     ohlcv_list = []
     ohlcv = ex.fetch_ohlcv("BTC/USDT", "15m", since=from_ts, limit=1000)
     ohlcv_list.append(ohlcv)
