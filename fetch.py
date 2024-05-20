@@ -26,16 +26,8 @@ if os.path.isfile("data.csv") == True and ifcsvempty("data.csv"):
         ohlcv_list = []
         ohlcv = ex.fetch_ohlcv("BTC/USDT", "15m", since=from_ts, limit=None)
         ohlcv_list.append(ohlcv)
-        """while True:
-            from_ts = ohlcv[-1][0]
-            new_ohlcv = ex.fetch_ohlcv("BTC/USDT", "15m", since=from_ts, limit=1000)
-            ohlcv.extend(new_ohlcv)
-            if len(new_ohlcv) != 999:
-                break"""
         # Convert ohlcv to DataFrame
-        new_df = pd.DataFrame(
-            ohlcv, columns=["date", "open", "high", "low", "close", "volume"]
-        )
+        new_df = pd.DataFrame(ohlcv, columns=["date", "open", "high", "low", "close", "volume"])
         new_df["date"] = pd.to_datetime(new_df["date"], unit="ms")
 
         # Append new data to existing CSV
