@@ -4,8 +4,11 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import Dense, LSTM, Dropout
+from keras.models import Sequential # type: ignore
+from keras.layers import Dense, LSTM, Dropout # type: ignore
+import discord
+
+TOKEN = "MTI0MjEyNDUzNDAxNDkzOTM1OA.G1Joi0.wrVX0Lv1S_MtCIUuC_QvUpxF3fqmEW187rirJ0"
 
 # Run fetch.py
 try:
@@ -72,4 +75,14 @@ for i in range(len(predictions)):
     else:
         future_predictions.append("Sideways")
 
-print(future_predictions)
+client = discord.Client()
+
+
+@client.event
+async def on_ready():  #  Called when internal cache is loaded
+
+    channel = client.get_channel("1226724862240886816")  #  Gets channel from internal cache
+    await channel.send(future_predictions)  #  Sends message to channel
+
+
+client.run(TOKEN)  # Starts up the bot

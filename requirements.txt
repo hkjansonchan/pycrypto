@@ -1,2 +1,6 @@
 pandas
 ccxt
+numpy
+scikit-learn
+karas
+discord
