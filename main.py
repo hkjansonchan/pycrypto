@@ -1,68 +1,73 @@
 import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-import yfinance as yf
+
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import pandas as pd
 import numpy as np
-from datetime import date, timedelta
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential # type: ignore
-from tensorflow.keras.layers import LSTM, Dense, Input # type: ignore
-from tensorflow.keras.optimizers import Adam # type: ignore
-from tensorflow.keras.losses import MeanSquaredError # type: ignore
-from sklearn.metrics import mean_squared_error
+from keras.models import Sequential
+from keras.layers import Dense, LSTM, Dropout
+from fetch import fetch
 
-# Fetch Bitcoin historical data
-start_date = date.today() - timedelta(days=365*5)
-data = yf.download("BTC-USD", start=start_date, end=date.today())
+# Run fetch.py
+fetch()
 
-# Convert data to pandas dataframe
-df = pd.DataFrame(data).reset_index()
+# Load the data
+data = pd.read_csv('data.csv')
 
-# Set date as index
-df.set_index("Date", inplace=True)
+# Preprocess the data
+data['date'] = pd.to_datetime(data['date'])
+data = data.set_index('date')
+data = data.drop_duplicates()
+data = data.resample("15T").interpolate()
+data = data[['open', 'high', 'low', 'close', 'volume']]
 
-# Normalize the data
+# Scale the data
 scaler = MinMaxScaler()
-df[['Open', 'High', 'Low', 'Close']] = scaler.fit_transform(df[['Open', 'High', 'Low', 'Close']])
+scaled_data = scaler.fit_transform(data)
 
-# Calculate daily return
-df['Daily Return'] = df['Close'].pct_change()
+# Prepare the data for the LSTM model
+X_train = []
+y_train = []
+for i in range(60, len(scaled_data)):
+    X_train.append(scaled_data[i-60:i, :])
+    y_train.append(scaled_data[i, 3])
 
-# Classify each day as bullish or bearish
-df['Bullish/Bearish'] = np.where(df['Daily Return'] > 0, 'Bullish', 'Bearish')
+X_train, y_train = np.array(X_train), np.array(y_train)
+X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 5))
 
-# Split the data into training and testing sets
-train_size = int(len(df) * 0.8)
-train_df = df[:train_size].copy()
-test_df = df[train_size:].copy()
-
-# Define the model
-model = Sequential()
-
-# Add the Input layer
-model.add(Input(shape=(1,)))
-
-# Add LSTM layer
-model.add(LSTM(50, activation='relu'))
-
-# Add Dense layer
-model.add(Dense(1))
+# Build the LSTM model
+input_layer = Input(shape=(X_train.shape[1], 5))
+lstm_layer1 = LSTM(units=50, return_sequences=True)(input_layer)
+lstm_layer2 = LSTM(units=50)(lstm_layer1)
+output_layer = Dense(1)(lstm_layer2)
+model = Sequential([input_layer, lstm_layer1, lstm_layer2, output_layer])
 
 # Compile the model
-model.compile(optimizer=Adam(), loss=MeanSquaredError())
+model.compile(loss='mean_squared_error', optimizer='adam')
 
-# Remove rows with None values from the data
-train_df.dropna(inplace=True)
-test_df.dropna(inplace=True)
+# Train the model
+model.fit(X_train, y_train, epochs=1, batch_size=1, verbose=2)
 
-# Fit the model
-train_data = np.expand_dims(train_df['Daily Return'].values, -1)
-model.fit(train_data, epochs=50, batch_size=1, verbose=2)
+# Prepare the data for prediction
+test_data = scaled_data[training_data_len - 60:, :]
+X_test = []
+for i in range(60, len(test_data)):
+    X_test.append(test_data[i-60:i, :])
+X_test = np.array(X_test)
+X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 5))
 
-# Make predictions on the test data
-test_data = np.expand_dims(test_df['Daily Return'].values, -1)
-predictions = model.predict(test_data)
+# Make predictions
+predictions = model.predict(X_test)
+predictions = scaler.inverse_transform(predictions)
 
-# Evaluate the performance of the model
-mse = mean_squared_error(test_df['Daily Return'], predictions)
-print('MSE:', mse)
+# Determine if the future several hours are bullish, bearish, or sideways
+future_predictions = []
+for i in range(len(predictions)):
+    if predictions[i] > data['close'][i]:
+        future_predictions.append('Bullish')
+    elif predictions[i] < data['close'][i]:
+        future_predictions.append('Bearish')
+    else:
+        future_predictions.append('Sideways')
+
+print(future_predictions)
