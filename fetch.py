@@ -12,9 +12,10 @@ def ifcsvempty(path: str):
         return False
 
 
-if os.path.isfile("data.csv") == True and ifcsvempty("data.csv"):
+csv_path = "data.csv"
+if os.path.isfile(csv_path) == True and ifcsvempty(csv_path):
     # Fetch to last row
-    csv = pd.read_csv("data.csv")
+    csv = pd.read_csv(csv_path)
     date_obj = datetime.strptime(csv.iloc[-1, 0], "%Y-%m-%d %H:%M:%S")
     date_obj += timedelta(minutes=15)
     ex = ccxt.binance()
@@ -27,19 +28,21 @@ if os.path.isfile("data.csv") == True and ifcsvempty("data.csv"):
         ohlcv = ex.fetch_ohlcv("BTC/USDT", "15m", since=from_ts, limit=None)
         ohlcv_list.append(ohlcv)
         # Convert ohlcv to DataFrame
-        new_df = pd.DataFrame(ohlcv, columns=["date", "open", "high", "low", "close", "volume"])
+        new_df = pd.DataFrame(
+            ohlcv, columns=["date", "open", "high", "low", "close", "volume"]
+        )
         new_df["date"] = pd.to_datetime(new_df["date"], unit="ms")
 
         # Append new data to existing CSV
         csv = pd.concat([csv, new_df], ignore_index=True)
-        csv.to_csv("data.csv", index=False)
+        csv.to_csv(csv_path, index=False)
     else:
         pass
 
 else:
-    if os.path.isfile("data.csv") == False:
+    if os.path.isfile(csv_path) == False:
         # Create new CSV file
-        f = open("data.csv", "x")
+        f = open(csv_path, "x")
     # Fetch new data to CSV
     ex = ccxt.binance()
     from_ts = ex.parse8601("2018-01-01 00:00:00")
@@ -58,4 +61,4 @@ else:
     df.set_index("date", inplace=True)
     df = df.sort_index(ascending=True)
     df.head()
-    df.to_csv("data.csv")
+    df.to_csv(csv_path)
