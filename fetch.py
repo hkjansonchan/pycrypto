@@ -28,6 +28,7 @@ if os.path.isfile("data.csv") == True:
     csv.to_csv("data.csv", index=False)
 
 else:
+    # Create new CSV file
     f = open("data.csv", "x")
     # Fetch new data to CSV
     ex = ccxt.binance()
@@ -48,4 +49,3 @@ else:
     df = df.sort_index(ascending=True)
     df.head()
     df.to_csv("data.csv")
-    print(pd.read_csv("data.csv").of_string())
