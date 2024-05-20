@@ -6,20 +6,22 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout
-from fetch import fetch
 
 # Run fetch.py
-fetch()
+try:
+    os.system("fetch.py")
+except Exception as e:
+    print(f"Error: {e}")
 
 # Load the data
-data = pd.read_csv('data.csv')
+data = pd.read_csv("data.csv")
 
 # Preprocess the data
-data['date'] = pd.to_datetime(data['date'])
-data = data.set_index('date')
+data["date"] = pd.to_datetime(data["date"])
+data = data.set_index("date")
 data = data.drop_duplicates()
 data = data.resample("15T").interpolate()
-data = data[['open', 'high', 'low', 'close', 'volume']]
+data = data[["open", "high", "low", "close", "volume"]]
 
 # Scale the data
 scaler = MinMaxScaler()
@@ -29,7 +31,7 @@ scaled_data = scaler.fit_transform(data)
 X_train = []
 y_train = []
 for i in range(60, len(scaled_data)):
-    X_train.append(scaled_data[i-60:i, :])
+    X_train.append(scaled_data[i - 60 : i, :])
     y_train.append(scaled_data[i, 3])
 
 X_train, y_train = np.array(X_train), np.array(y_train)
@@ -43,16 +45,16 @@ output_layer = Dense(1)(lstm_layer2)
 model = Sequential([input_layer, lstm_layer1, lstm_layer2, output_layer])
 
 # Compile the model
-model.compile(loss='mean_squared_error', optimizer='adam')
+model.compile(loss="mean_squared_error", optimizer="adam")
 
 # Train the model
 model.fit(X_train, y_train, epochs=1, batch_size=1, verbose=2)
 
 # Prepare the data for prediction
-test_data = scaled_data[training_data_len - 60:, :]
+test_data = scaled_data[training_data_len - 60 :, :]
 X_test = []
 for i in range(60, len(test_data)):
-    X_test.append(test_data[i-60:i, :])
+    X_test.append(test_data[i - 60 : i, :])
 X_test = np.array(X_test)
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 5))
 
@@ -63,11 +65,11 @@ predictions = scaler.inverse_transform(predictions)
 # Determine if the future several hours are bullish, bearish, or sideways
 future_predictions = []
 for i in range(len(predictions)):
-    if predictions[i] > data['close'][i]:
-        future_predictions.append('Bullish')
-    elif predictions[i] < data['close'][i]:
-        future_predictions.append('Bearish')
+    if predictions[i] > data["close"][i]:
+        future_predictions.append("Bullish")
+    elif predictions[i] < data["close"][i]:
+        future_predictions.append("Bearish")
     else:
-        future_predictions.append('Sideways')
+        future_predictions.append("Sideways")
 
 print(future_predictions)
