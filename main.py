@@ -9,7 +9,13 @@ from keras.layers import Dense, LSTM, Dropout # type: ignore
 import discord
 
 TOKEN = ""
+def disprint(mes):
+    @client.event
+    async def on_ready():  #  Called when internal cache is loaded
 
+        channel = client.get_channel("1226724862240886816")  #  Gets channel from internal cache
+        await channel.send(mes)  #  Sends message to channel
+    client.run(TOKEN)  # Starts up the bot
 # Run fetch.py
 try:
     os.system("fetch.py")
@@ -77,12 +83,4 @@ for i in range(len(predictions)):
 
 client = discord.Client()
 
-
-@client.event
-async def on_ready():  #  Called when internal cache is loaded
-
-    channel = client.get_channel("1226724862240886816")  #  Gets channel from internal cache
-    await channel.send(future_predictions)  #  Sends message to channel
-
-
-client.run(TOKEN)  # Starts up the bot
+disprint(future_predictions)
