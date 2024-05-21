@@ -8,7 +8,7 @@ from keras.models import Sequential # type: ignore
 from keras.layers import Dense, LSTM, Dropout # type: ignore
 import discord
 
-TOKEN = "MTI0MjEyNDUzNDAxNDkzOTM1OA.G1Joi0.wrVX0Lv1S_MtCIUuC_QvUpxF3fqmEW187rirJ0"
+TOKEN = ""
 
 # Run fetch.py
 try:
