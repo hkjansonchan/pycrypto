@@ -12,7 +12,7 @@ def ifcsvempty(path: str):
         return False
 
 
-csv_path = "data.csv"
+csv_path = "btc15m.csv"
 if os.path.isfile(csv_path) == True and ifcsvempty(csv_path):
     # Fetch to last row
     csv = pd.read_csv(csv_path)

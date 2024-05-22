@@ -1,16 +1,7 @@
 import os
+from discord import dcsend
 
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-from discord_webhook import DiscordWebhook
-
-
-
-def dcsend(url: str, mes: str):
-    webhook = DiscordWebhook(url=url, content=mes)
-    webhook.execute()
-
-
-webhook_url = ""
+# os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 # Run fetch.py
 try:
@@ -18,3 +9,4 @@ try:
 except Exception as e:
     print(f"Error: {e}")
 
+dcsend("")
