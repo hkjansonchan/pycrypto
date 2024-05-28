@@ -1,7 +1,4 @@
 pandas
 ccxt
 discord-webhook
-numpy
-scikit-learn
-keras
-seaborn~=0.13.2
+candlestick
