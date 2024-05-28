@@ -1,6 +1,7 @@
 pandas
+ccxt
+discord-webhook
 numpy
 scikit-learn
 keras
-discord-webhook
 seaborn~=0.13.2
