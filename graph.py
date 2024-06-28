@@ -8,7 +8,7 @@ def graph(file: str, start_date: str):
     data["date"] = pd.to_datetime(data["date"])
     data = data.set_index("date")
     data_slice = data.loc[start_date:]
-    mpf.plot(data_slice[["open", "high", "low", "close"]], type="line")
+    mpf.plot(data_slice, type="line")
 
 
 if __name__ == "__main__":
