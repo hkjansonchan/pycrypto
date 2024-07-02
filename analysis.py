@@ -1,9 +1,10 @@
 import pandas as pd
-import talib as ta
 import pandas_ta as pt
 
 import matplotlib.pyplot as plt
+
 path = "btc15m.csv"
+st_da = "2024-07-01"  # Start date
 
 
 def macd(file: str, start_date: str):
@@ -17,5 +18,7 @@ def macd(file: str, start_date: str):
 
 
 if __name__ == "__main__":
-    plt.plot(macd(path, "2024-01-01").index, macd(path, "2024-01-01").MACD_12_26_9, "b", label="DIF")
+    plt.plot(macd(path, st_da).index, macd(path, st_da).MACD_12_26_9, "b", label="DIF")
+    plt.plot(macd(path, st_da).index, macd(path, st_da).MACDs_12_26_9, "r", label="DEA")
+    plt.legend()
     plt.show()
