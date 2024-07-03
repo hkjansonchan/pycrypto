@@ -8,6 +8,8 @@ st_da = "2024-07-01"  # Start date
 
 
 def macd(file: str, start_date: str):
+    # MACD_12_26_9 = DIF
+    # MACDs_12_26_9 = MACD
     df = pd.read_csv(file)
     macd_df = pt.macd(df["close"])
     macd_df = pd.concat([df.date, macd_df], axis=1)
@@ -15,6 +17,10 @@ def macd(file: str, start_date: str):
     macd_df = macd_df.set_index("date")
     macd_df = macd_df.loc[start_date:]
     return macd_df
+
+
+def analysis_macd(df: pd.DataFrame):
+    df = macd(path, st_da)
 
 
 if __name__ == "__main__":

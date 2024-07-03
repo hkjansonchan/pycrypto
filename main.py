@@ -1,5 +1,5 @@
 import os
-from discord import dcsend
+from discord import discord_send
 
 # os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
@@ -9,4 +9,4 @@ try:
 except Exception as e:
     print(f"Error: {e}")
 
-dcsend("")
+discord_send("")
