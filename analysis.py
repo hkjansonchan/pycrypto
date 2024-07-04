@@ -1,6 +1,6 @@
 import pandas as pd
 import pandas_ta as pt
-
+import talib
 import matplotlib.pyplot as plt
 
 path = "btc15m.csv"
@@ -17,10 +17,6 @@ def macd(file: str, start_date: str):
     macd_df = macd_df.set_index("date")
     macd_df = macd_df.loc[start_date:]
     return macd_df
-
-
-def analysis_macd(df: pd.DataFrame):
-    df = macd(path, st_da)
 
 
 if __name__ == "__main__":
