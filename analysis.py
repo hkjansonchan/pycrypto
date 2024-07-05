@@ -1,12 +1,12 @@
 import pandas as pd
 import talib
-from tool import cut_df
+from tool import cut_df, time_arithmetic as t_a
 
 path = "btc15m.csv"
 start_d = "2024-07-01"  # Start date
 
-#Add date cut
-def analyze_data(data_path: str, start_date: str):
+
+def analyze_data(data_path: str, start_date: str = False):
     # Read data from CSV assuming columns are named 'open', 'high', 'low', 'close', 'volume'
     df = pd.read_csv(data_path)
     if start_date:
@@ -79,7 +79,21 @@ def analyze_data(data_path: str, start_date: str):
     return df
 
 
+def analysis():  # main()
+    df = pd.read_csv("analysis_btc.csv")
+    start_date = t_a(df.iloc[-1, 0], operation="-", minutes=15 * 40)
+    df = pd.concat(
+        [df, cut_df(analyze_data(path, start_date), t_a(df.iloc[-1, 0], minutes=15))],
+        ignore_index=True,
+        sort=False,
+    )
+    df.to_csv("analysis_btc.csv", index=False)
+    return df
+
+
 if __name__ == "__main__":
+    """
     df = analyze_data(path, start_date=False)
-    df.to_csv("analysis.csv", index=False)
+    """
+    analysis()
     pass

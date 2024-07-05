@@ -124,9 +124,12 @@ def analyze_bitcoin_data2(data_path: str, start_date: str):
     return df
 
 
-data_path = "btc15m.csv"
+"""data_path = "btc15m.csv"
 start_date = "2024-06-01"
 df = analyze_bitcoin_data2(data_path, start_date)
 print(df)
 # df.to_csv("analysis.csv")
 # print(cut_df(pd.read_csv(data_path), "2024-06-01"))
+"""
+df = pd.read_csv("analysis_btc.csv")
+print(df.iloc[-2:-1, -2:-1])
