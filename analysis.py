@@ -5,11 +5,12 @@ from tool import cut_df
 path = "btc15m.csv"
 start_d = "2024-07-01"  # Start date
 
-
+#Add date cut
 def analyze_data(data_path: str, start_date: str):
     # Read data from CSV assuming columns are named 'open', 'high', 'low', 'close', 'volume'
     df = pd.read_csv(data_path)
-    df = cut_df(pd.read_csv(data_path), start_date)
+    if start_date:
+        df = cut_df(pd.read_csv(data_path), start_date)
 
     # Calculate MACD
     macd, macdsignal, macdhist = talib.MACD(
@@ -79,6 +80,6 @@ def analyze_data(data_path: str, start_date: str):
 
 
 if __name__ == "__main__":
-    df = analyze_data(path, start_d)
+    df = analyze_data(path, start_date=False)
     df.to_csv("analysis.csv", index=False)
     pass
