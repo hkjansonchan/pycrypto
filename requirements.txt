@@ -1,4 +1,5 @@
-pandas
 ccxt
 discord-webhook
-candlestick
+mplfinance
+pandas
+ta-lib
