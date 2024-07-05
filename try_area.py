@@ -52,11 +52,11 @@ def analyze_bitcoin_data(data_path: str, start_date: str):
     return df
 
 
-def analyze_bitcoin_data2(df):
+def analyze_bitcoin_data2(data_path: str, start_date: str):
     # Read data from CSV assuming columns are named 'open', 'high', 'low', 'close', 'volume'
-    #df = pd.read_csv(data_path)
-    #df = cut_df(pd.read_csv(data_path), "2024-06-01")
-    
+    df = pd.read_csv(data_path)
+    df = cut_df(pd.read_csv(data_path), start_date)
+
     # Calculate MACD
     macd, macdsignal, macdhist = talib.MACD(
         df["close"], fastperiod=12, slowperiod=26, signalperiod=9
@@ -126,8 +126,7 @@ def analyze_bitcoin_data2(df):
 
 data_path = "btc15m.csv"
 start_date = "2024-06-01"
-df = analyze_bitcoin_data2(pd.read_csv(data_path))
-
+df = analyze_bitcoin_data2(data_path, start_date)
 print(df)
-#df.to_csv("analysis.csv")
-#print(cut_df(pd.read_csv(data_path), "2024-06-01"))
+# df.to_csv("analysis.csv")
+# print(cut_df(pd.read_csv(data_path), "2024-06-01"))
