@@ -6,9 +6,6 @@ from analysis import analysis
 # Run fetch.py
 fetch()
 
-# Run analysis.py
-df = analysis()
-
-print(df.iloc[-1, -1])
-# Run discord.py
-# discord_send("")
+print(analysis())
+# Run analysis.py & discord.py
+#discord_send('')

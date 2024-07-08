@@ -95,5 +95,13 @@ if __name__ == "__main__":
     """
     df = analyze_data(path, start_date=False)
     """
-    analysis()
-    pass
+    df = analysis()
+    ls = df.iloc[-2:, [0, -2, -1]].values.tolist()
+    ls.insert(0, [df.columns[0], df.columns[-2], df.columns[-1]])
+    temp = []
+    p = []
+    for i in ls:
+        temp.append([str(j) for j in i])
+    for i in temp:
+        p.append(" ".join(i))
+    print("\n".join(p))
