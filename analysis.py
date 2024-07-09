@@ -88,20 +88,18 @@ def analysis():  # main()
         sort=False,
     )
     df.to_csv("analysis_btc.csv", index=False)
-    return df
-
-
-if __name__ == "__main__":
-    """
-    df = analyze_data(path, start_date=False)
-    """
-    df = analysis()
     ls = df.iloc[-2:, [0, -2, -1]].values.tolist()
     ls.insert(0, [df.columns[0], df.columns[-2], df.columns[-1]])
     temp = []
     p = []
     for i in ls:
         temp.append([str(j) for j in i])
-    for i in temp:
-        p.append(" ".join(i))
-    print("\n".join(p))
+    r = f"{temp[0][0]}\t\t\t\t\t{temp[0][1]}\t\t{temp[0][2]}\n{temp[1][0]}\t\t{temp[1][1]}\t\t\t\t{temp[1][2]}\n{temp[2][0]}\t\t{temp[2][1]}\t\t\t\t{temp[2][2]}"
+    return r
+
+
+if __name__ == "__main__":
+    """
+    df = analyze_data(path, start_date=False)
+    """
+    print(analysis())

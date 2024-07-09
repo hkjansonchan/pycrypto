@@ -6,6 +6,8 @@ from analysis import analysis
 # Run fetch.py
 fetch()
 
-print(analysis())
-# Run analysis.py & discord.py
-#discord_send('')
+# Run analysis.py
+mes = analysis()
+
+# Run discord.py
+discord_send(mes)
