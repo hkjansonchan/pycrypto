@@ -52,7 +52,7 @@ def time_arithmetic(
 
 
 if __name__ == "__main__":
-    df = cut_df(pd.read_csv("btc15m.csv"), "2024-06-01 00:14:00")
+    df = cut_df(pd.read_csv("pycrypto/btc15m.csv"), "2024-06-01 00:14:00")
     print(df)
     #print(time_arithmetic("2024-02-29 00:00:00", operation="-", minutes=15))
     pass

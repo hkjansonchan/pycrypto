@@ -17,7 +17,7 @@ def fetch():
     start = "2018-01-01 00:00:00"
     delta = timedelta(minutes=15)
 
-    csv_path = f"btc{interval}.csv"
+    csv_path = f"pycrypto/btc{interval}.csv"
     if os.path.isfile(csv_path) == True and ifcsvempty(csv_path) == True:
         # Fetch to last row
         csv = pd.read_csv(csv_path)

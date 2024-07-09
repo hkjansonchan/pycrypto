@@ -80,14 +80,14 @@ def analyze_data(data_path: str, start_date: str = False):
 
 
 def analysis():  # main()
-    df = pd.read_csv("analysis_btc.csv")
+    df = pd.read_csv("pycrypto/analysis_btc.csv")
     start_date = t_a(df.iloc[-1, 0], operation="-", minutes=15 * 40)
     df = pd.concat(
         [df, cut_df(analyze_data(path, start_date), t_a(df.iloc[-1, 0], minutes=15))],
         ignore_index=True,
         sort=False,
     )
-    df.to_csv("analysis_btc.csv", index=False)
+    df.to_csv("pycrypto/analysis_btc.csv", index=False)
     ls = df.iloc[-2:, [0, -2, -1]].values.tolist()
     ls.insert(0, [df.columns[0], df.columns[-2], df.columns[-1]])
     temp = []

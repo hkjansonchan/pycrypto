@@ -11,4 +11,4 @@ def graph(file: str, start_date: str):
 
 
 if __name__ == "__main__":
-    graph("btc15m.csv", "2024-06-01")
+    graph("pycrypto/btc15m.csv", "2024-06-01")
