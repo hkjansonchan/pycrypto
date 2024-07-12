@@ -11,13 +11,12 @@ def ifcsvempty(path: str):
     except:
         return False
 
-def fetch():
+def fetch(csv_path):
     interval = "15m"
     style = "%Y-%m-%d %H:%M:%S"
     start = "2018-01-01 00:00:00"
     delta = timedelta(minutes=15)
 
-    csv_path = f"pycrypto/btc{interval}.csv"
     if os.path.isfile(csv_path) == True and ifcsvempty(csv_path) == True:
         # Fetch to last row
         csv = pd.read_csv(csv_path)
@@ -65,3 +64,7 @@ def fetch():
         df.set_index("date", inplace=True)
         df = df.sort_index(ascending=True)
         df.to_csv(csv_path)
+
+if __name__ == "__main__":
+    fetch("btc15m.csv")
+ 
