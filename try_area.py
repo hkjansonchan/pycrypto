@@ -1,7 +1,10 @@
 import pandas as pd
 import talib
 from tool import cut_df
-
+import os
+from datetime import datetime, timedelta, timezone
+from fetch import ifcsvempty
+import ccxt
 
 def analyze_bitcoin_data(data_path: str, start_date: str):
     # Read data from CSV assuming columns are named 'open', 'high', 'low', 'close', 'volume'
@@ -130,6 +133,36 @@ df = analyze_bitcoin_data2(data_path, start_date)
 print(df)
 # df.to_csv("analysis.csv")
 # print(cut_df(pd.read_csv(data_path), "2024-06-01"))
-"""
 df = pd.read_csv("analysis_btc.csv")
 print(df.iloc[-2:-1, -2:-1])
+"""
+
+csv_path = "btc15m.csv"
+interval = "15m"
+style = "%Y-%m-%d %H:%M:%S"
+start = "2018-01-01 00:00:00"
+
+if os.path.isfile(csv_path) == True and ifcsvempty(csv_path) == True:
+    # Fetch to last row
+    csv = pd.read_csv(csv_path)
+    date_obj = datetime.strptime(csv.iloc[-1, 0], style)
+    date_obj += timedelta(minutes=15)
+    ex = ccxt.binance()
+    now = datetime.now(timezone.utc)
+    dt_string = now.strftime(style)
+    dt_string = datetime.strptime(dt_string, style)
+    if date_obj <= dt_string:
+        from_ts = ex.parse8601(str(date_obj))
+        ohlcv_list = []
+        ohlcv = ex.fetch_ohlcv("BTC/USD", interval, since=from_ts, limit=1000)
+        ohlcv_list.append(ohlcv)
+        # Convert ohlcv to DataFrame
+        new_df = pd.DataFrame(
+            ohlcv, columns=["date", "open", "high", "low", "close", "volume"]
+        )
+        new_df["date"] = pd.to_datetime(new_df["date"], unit="ms")
+
+        # Append new data to existing CSV
+        csv = pd.concat([csv, new_df], ignore_index=True)
+        #csv.to_csv(csv_path, index=False)
+print(csv)

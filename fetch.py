@@ -1,7 +1,7 @@
 import os
 import ccxt
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def ifcsvempty(path: str):
@@ -15,7 +15,6 @@ def fetch(csv_path):
     interval = "15m"
     style = "%Y-%m-%d %H:%M:%S"
     start = "2018-01-01 00:00:00"
-    delta = timedelta(minutes=15)
 
     if os.path.isfile(csv_path) == True and ifcsvempty(csv_path) == True:
         # Fetch to last row
@@ -23,13 +22,13 @@ def fetch(csv_path):
         date_obj = datetime.strptime(csv.iloc[-1, 0], style)
         date_obj += timedelta(minutes=15)
         ex = ccxt.binance()
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         dt_string = now.strftime(style)
         dt_string = datetime.strptime(dt_string, style)
         if date_obj <= dt_string:
             from_ts = ex.parse8601(str(date_obj))
             ohlcv_list = []
-            ohlcv = ex.fetch_ohlcv("BTC/USDT", interval, since=from_ts, limit=1000)
+            ohlcv = ex.fetch_ohlcv("BTC/USD", interval, since=from_ts, limit=1000)
             ohlcv_list.append(ohlcv)
             # Convert ohlcv to DataFrame
             new_df = pd.DataFrame(
