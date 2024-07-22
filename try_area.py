@@ -1,6 +1,6 @@
 import pandas as pd
 import talib
-from tool import cut_df
+from tool import cut_df, find_in_first_column as find, time_arithmetic as t_a
 import os
 from datetime import datetime, timedelta, timezone
 from fetch import ifcsvempty
@@ -127,42 +127,40 @@ def analyze_bitcoin_data2(data_path: str, start_date: str):
     return df
 
 
-"""data_path = "btc15m.csv"
-start_date = "2024-06-01"
-df = analyze_bitcoin_data2(data_path, start_date)
-print(df)
-# df.to_csv("analysis.csv")
-# print(cut_df(pd.read_csv(data_path), "2024-06-01"))
-df = pd.read_csv("analysis_btc.csv")
-print(df.iloc[-2:-1, -2:-1])
-"""
+def test():
+    data_1 = {'name':['Alan','Joseph','Wennie', 'Ruby'],
+            'gender':['M','M','F','F'],
+            'city':['Taipei','Hualien','Hsinchu', 'Taoyuan']}
+    data_2 = {'name':['Ruby','Chris','Tanya'],
+            'gender':['F','M','F'],
+            'city':['Taoyuan','Kaohsiung', 'Taichung']}
+    df1 = pd.DataFrame(data_1)
+    df2 = pd.DataFrame(data_2)
+    print('data_1')
+    print(df1)
+    print('data_2')
+    print(df2)
+    con = pd.concat([df1,df2],ignore_index=True)
+    print('concat')
+    print(con)
+    df = pd.concat([df1,df2],ignore_index=True).drop_duplicates()
+    print('concat with .drop_duplicates()')
+    print(df)
+    print(find(df,'Joseph'))
 
-csv_path = "btc15m.csv"
-interval = "15m"
-style = "%Y-%m-%d %H:%M:%S"
-start = "2018-01-01 00:00:00"
 
-if os.path.isfile(csv_path) == True and ifcsvempty(csv_path) == True:
-    # Fetch to last row
-    csv = pd.read_csv(csv_path)
-    date_obj = datetime.strptime(csv.iloc[-1, 0], style)
-    date_obj += timedelta(minutes=15)
-    ex = ccxt.binance()
-    now = datetime.now(timezone.utc)
-    dt_string = now.strftime(style)
-    dt_string = datetime.strptime(dt_string, style)
-    if date_obj <= dt_string:
-        from_ts = ex.parse8601(str(date_obj))
-        ohlcv_list = []
-        ohlcv = ex.fetch_ohlcv("BTC/USD", interval, since=from_ts, limit=1000)
-        ohlcv_list.append(ohlcv)
-        # Convert ohlcv to DataFrame
-        new_df = pd.DataFrame(
-            ohlcv, columns=["date", "open", "high", "low", "close", "volume"]
-        )
-        new_df["date"] = pd.to_datetime(new_df["date"], unit="ms")
+######################################################################################
+raw = "/home/hkjansonchan/pycrypto/btc15m.csv"
+ana = "/home/hkjansonchan/pycrypto/analysis_btc.csv"
+from analysis import analyze_data
 
-        # Append new data to existing CSV
-        csv = pd.concat([csv, new_df], ignore_index=True)
-        #csv.to_csv(csv_path, index=False)
-print(csv)
+if ifcsvempty(ana):
+    ana_df = pd.read_csv(ana)
+    ana_last_date = str(ana_df.iloc[-1, 0]) # -1 for last row, 0 for first column
+    start_date = datetime.strptime(ana_last_date, "%Y-%m-%d %H:%M:%S") + timedelta(minutes=40*15)
+    print(start_date)
+    new_df = analyze_data(raw, start_date)
+    new_df = new_df[36:]
+    first_date = new_df.iloc[0, 0]
+    ana_index = ana_df[ana_df.iloc[:, 0]==str(first_date)].index[0]
+    df = pd.concat([ana_df[:ana_index], new_df], ignore_index=True)

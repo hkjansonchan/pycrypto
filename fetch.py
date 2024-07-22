@@ -2,14 +2,8 @@ import os
 import ccxt
 import pandas as pd
 from datetime import datetime, timedelta, timezone
+from tool import ifcsvempty
 
-
-def ifcsvempty(path: str):
-    try:
-        pd.read_csv(path)
-        return True
-    except:
-        return False
 
 def fetch(csv_path):
     interval = "15m"
@@ -62,7 +56,7 @@ def fetch(csv_path):
         df["date"] = pd.to_datetime(df["date"], unit="ms")
         df.set_index("date", inplace=True)
         df = df.sort_index(ascending=True)
-        df.to_csv(csv_path)
+        df.to_csv(csv_path, index=False)
 
 if __name__ == "__main__":
     fetch("btc15m.csv")

@@ -51,6 +51,23 @@ def time_arithmetic(
     return date
 
 
+def ifcsvempty(path: str):
+    try:
+        pd.read_csv(path)
+        return True
+    except:
+        return False
+
+
+def find_in_first_column(df, target):
+    try:
+        return df[df.iloc[:, 0]==target].index[0]
+    except IndexError:
+        return -1
+    except:
+        return -2
+
+
 if __name__ == "__main__":
     df = cut_df(pd.read_csv("pycrypto/btc15m.csv"), "2024-06-01 00:14:00")
     print(df)

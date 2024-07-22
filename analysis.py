@@ -1,9 +1,12 @@
 import pandas as pd
 import talib
-from tool import cut_df, time_arithmetic as t_a
+from datetime import datetime, timedelta
+from tool import cut_df, ifcsvempty, time_arithmetic as t_a, find_in_first_column as find
 
-# path = "btc15m.csv"
+
 start_d = "2024-07-01"  # Start date
+raw = "/home/hkjansonchan/pycrypto/btc15m.csv"
+ana = "/home/hkjansonchan/pycrypto/analysis_btc.csv"
 
 
 def analyze_data(data_path: str, start_date: str = False):
@@ -80,26 +83,25 @@ def analyze_data(data_path: str, start_date: str = False):
 
 
 def analysis(raw, ana):  # main()
-    df = pd.read_csv(ana)
-    start_date = t_a(df.iloc[-1, 0], operation="-", minutes=15 * 40)
-    df = pd.concat(
-        [df, cut_df(analyze_data(raw, start_date), t_a(df.iloc[-1, 0], minutes=15))],
-        ignore_index=True,
-        sort=False,
-    )
+    if ifcsvempty(ana):
+        ana_df = pd.read_csv(ana)
+        ana_last_date = str(ana_df.iloc[-1, 0]) # -1 for last row, 0 for first column
+        start_date = datetime.strptime(ana_last_date, "%Y-%m-%d %H:%M:%S") - timedelta(minutes=40*15)
+        new_df = analyze_data(raw, start_date)
+        new_df = new_df[36:]
+        first_date = new_df.iloc[0, 0] # analyzed data first date
+        ana_index = ana_df[ana_df.iloc[:, 0]==str(first_date)].index[0]
+        df = pd.concat([ana_df[:ana_index], new_df], ignore_index=True)
+    else:
+        df = analyze_data(raw)
+    
     df.to_csv(ana, index=False)
-    ls = df.iloc[-2:, [0, -2, -1]].values.tolist()
-    ls.insert(0, [df.columns[0], df.columns[-2], df.columns[-1]])
-    temp = []
-    p = []
-    for i in ls:
-        temp.append([str(j) for j in i])
-    r = f"{temp[0][0]}\t\t\t\t\t{temp[0][1]}\t\t{temp[0][2]}\n{temp[1][0]}\t\t{temp[1][1]}\t\t\t\t{temp[1][2]}\n{temp[2][0]}\t\t{temp[2][1]}\t\t\t\t{temp[2][2]}"
-    return r
-
+    l = df.iloc[-2:, [0, -2, -1]].reset_index(drop=True).values.tolist()
+    if l[0][1]==l[0][2]==l[1][1]==l[1][2]==None:
+        return False
+    else:
+        mes = f'{l[0][0]}\t{l[0][1]}\t{l[0][2]}\n{l[1][0]}\t{l[1][1]}\t{l[1][2]}'
+        return mes
 
 if __name__ == "__main__":
-    """
-    df = analyze_data(path, start_date=False)
-    """
-    print(analysis())
+    print(analysis(raw=raw, ana=ana))
