@@ -97,7 +97,7 @@ def analysis(raw, ana):  # main()
     
     df.to_csv(ana, index=False)
     l = df.iloc[-2:, [0, -2, -1]].reset_index(drop=True).values.tolist()
-    if l[0][1]==l[0][2]==l[1][1]==l[1][2]==None:
+    if l[0][1]==l[0][2]==l[1][1]==l[1][2]=='':
         return False
     else:
         mes = f'{l[0][0]}\t{l[0][1]}\t{l[0][2]}\n{l[1][0]}\t{l[1][1]}\t{l[1][2]}'
