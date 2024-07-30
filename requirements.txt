@@ -1,5 +1,6 @@
 ccxt
 discord-webhook
 mplfinance
+numpy==1.26.4
 pandas
 ta-lib
