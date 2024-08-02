@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from fetch import ifcsvempty
 import ccxt
+from var import *
 
 def analyze_bitcoin_data(data_path: str, start_date: str):
     # Read data from CSV assuming columns are named 'open', 'high', 'low', 'close', 'volume'
@@ -149,18 +150,5 @@ def test():
     print(find(df,'Joseph'))
 
 
-######################################################################################
-raw = "/home/hkjansonchan/pycrypto/btc15m.csv"
-ana = "/home/hkjansonchan/pycrypto/analysis_btc.csv"
-from analysis import analyze_data
-
-if ifcsvempty(ana):
-    ana_df = pd.read_csv(ana)
-    ana_last_date = str(ana_df.iloc[-1, 0]) # -1 for last row, 0 for first column
-    start_date = datetime.strptime(ana_last_date, "%Y-%m-%d %H:%M:%S") + timedelta(minutes=40*15)
-    print(start_date)
-    new_df = analyze_data(raw, start_date)
-    new_df = new_df[36:]
-    first_date = new_df.iloc[0, 0]
-    ana_index = ana_df[ana_df.iloc[:, 0]==str(first_date)].index[0]
-    df = pd.concat([ana_df[:ana_index], new_df], ignore_index=True)
+csv = pd.read_csv(raw)
+print(csv)
